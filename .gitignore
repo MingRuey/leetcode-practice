@@ -1,0 +1,12 @@
+# cpp output
+*out*.cpp
+*.bin
+
+# python related
+.pytest_cache
+.vscode
+
+# TODO: should include it in Dockerfile
+# installed google test
+googletest
+cpplint
