@@ -23,8 +23,10 @@ gtest() {
 
     sed -e "1s@^@using namespace std;\n\n@" \
         -e "1s@^@#include <algorithm>\n@" \
+        -e "1s@^@#include <numeric>\n@" \
         -e "1s@^@#include <vector>\n@" \
         -e "1s@^@#include <set>\n@" \
+        -e "1s@^@#include <stack>\n@" \
         -e "1s@^@#include <stdlib.h>\n@" $1 > $otarget
 
     sed -e "1s@^@#include \"$otarget\"\n\n@" \
@@ -33,13 +35,14 @@ gtest() {
 
     echo "\nint main(int argc, char **argv) {\n    testing::InitGoogleTest(&argc, argv);\n    return RUN_ALL_TESTS();\n}" >> $otest
 
-    g++ $otest -o $obin -std=c++11 -lgtest -lpthread
+    cpplint --filter=-legal/copyright $otarget $otest 
+    g++ $otest -g -o $obin -std=c++11 -lgtest -lpthread
     $obin
 }
 
-clear() {
+clean() {
     if [ -z $1 ]; then
-        echo "Usage: clear target_directory"
+        echo "Usage: clean target_directory"
         return 1
     fi
 
