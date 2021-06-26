@@ -69,28 +69,75 @@
 // @lc code=start
 /**
  * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
  */
+
+/*
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+*/
 
 class Codec {
  public:
     // Encodes a tree to a single string.
     string serialize(TreeNode* root) {
-        return "";
+        encoded.clear();
+        preorder(root);
+        return encoded;
     }
 
     // Decodes your encoded data to tree.
     TreeNode* deserialize(string data) {
-        return NULL;
+        TreeNode* root = NULL;
+        TreeNode** cur = &root;
+        stack<TreeNode**> stk;
+        stk.push(cur);
+
+        string accumulated = "";
+        for (auto ch : data) {
+            if (ch == ',') {
+                int val = stoi(accumulated);
+                accumulated = "";
+
+                TreeNode** cur = stk.top();
+                stk.pop();
+                TreeNode* node = new TreeNode(val);
+                *cur = node;
+                stk.push(&(node->right));
+                stk.push(&(node->left));
+            } else if (ch == '#') {
+                stk.pop();
+                accumulated = "";
+            } else {
+                accumulated += ch;
+            }
+        }
+        return root;
     }
 
  private:
-    void bfs() {
+    string encoded;
+
+    void preorder(TreeNode* node) {
+        bool nonEmpty = record(node);
+        if (nonEmpty) {
+            preorder(node->left);
+            preorder(node->right);
+        }
+    }
+
+    bool record(TreeNode* node) {
+        if (!node) {
+            encoded += "#";
+            return false;
+        }
+        string s = to_string(node->val);
+        encoded += s;
+        encoded += ",";
+        return true;
     }
 };
 

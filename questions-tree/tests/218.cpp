@@ -6,3 +6,21 @@ TEST(Skyline, sample) {
     auto result = s.getSkyline(input);
     EXPECT_THAT(result, testing::ContainerEq(expected));
 }
+
+TEST(Skyline, same_height) {
+    vector<vector<int>> input = {{0,2,3},{2,5,3}};
+    vector<vector<int>> expected = {{0,3},{5,0}};
+
+    Solution s;
+    auto result = s.getSkyline(input);
+    EXPECT_THAT(result, testing::ContainerEq(expected));
+}
+
+TEST(Skyline, same_x) {
+    vector<vector<int>> input = {{1,2,1},{1,2,2},{1,2,3}};
+    vector<vector<int>> expected = {{1,3},{2,0}};
+
+    Solution s;
+    auto result = s.getSkyline(input);
+    EXPECT_THAT(result, testing::ContainerEq(expected));
+}

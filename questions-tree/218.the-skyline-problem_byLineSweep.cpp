@@ -86,7 +86,7 @@ struct KeyPoint {
 struct KeyPointComparator {
     bool operator() (const KeyPoint& pt1, const KeyPoint& pt2) {
         if (pt1.X != pt2.X) return pt1.X < pt2.X;
-        return abs(pt1.Y) > abs(pt2.Y);
+        return pt1.Y < pt2.Y;
     }
 };
 
@@ -95,8 +95,8 @@ class Solution {
     vector<vector<int>> getSkyline(vector<vector<int>> const& buildings) {
         vector<KeyPoint> pts;
         for (auto building : buildings) {
-            KeyPoint left = { building[0], building[2] };
-            KeyPoint right = { building[1], -1 * building[2] };
+            KeyPoint left = { building[0], -1 * building[2] };
+            KeyPoint right = { building[1], building[2] };
             pts.push_back(left);
             pts.push_back(right);
         }
@@ -109,22 +109,16 @@ class Solution {
         for (auto pt : pts) {
             int absY = abs(pt.Y);
             // left edge
-            if (pt.Y > 0) {
-                if (absY > height) {
-                    result.push_back({pt.X, absY});
-                    height = absY;
-                }
+            if (pt.Y < 0) {
                 hs.insert(absY);
             // right edge
             } else {
-                int record_high = *(hs.begin());
-                if (absY >= height && absY > record_high) {
-                    hs.erase(hs.begin());
-                    result.push_back({pt.X, record_high});
-                    height = record_high;
-                } else {
-                    hs.erase(hs.find(absY));
-                }
+                hs.erase(hs.find(absY));
+            }
+
+            if (*hs.begin() != height) {
+                height = *hs.begin();
+                result.push_back({pt.X, height});
             }
         }
         return result;
